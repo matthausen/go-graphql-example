@@ -1,0 +1,35 @@
+schema {
+  query: MyQuery
+  mutation: MyMutation
+}
+
+type MyQuery {
+  user(id: ID!): User
+  users: [User!]!
+}
+
+type MyMutation {
+  createUser(user: UserInput!): User!
+  updateUser(id: ID!, changes: Map!): User
+}
+
+type User {
+  id: ID!
+  name: String!
+  isPremium: Boolean! @hasRole(role: ADMIN)
+}
+
+input UserInput {
+  name: String!
+  isPremium: Boolean
+}
+
+scalar Map
+
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+directive @user(id: ID!) on MUTATION | QUERY | FIELD_DEFINITION
+
+enum Role {
+  ADMIN
+  USER
+}
