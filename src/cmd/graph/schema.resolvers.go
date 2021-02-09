@@ -7,12 +7,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/matthausen/gql-example/v2/graph/generated"
-	"github.com/matthausen/gql-example/v2/graph/model"
+	"github.com/matthausen/gql-example/graph/generated"
+	"github.com/matthausen/gql-example/graph/model"
 )
 
 func (r *myMutationResolver) CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	r.User.Create(user.Name, true)
+	panic(fmt.Errorf("CreateUser method not implemented"))
 }
 
 func (r *myMutationResolver) UpdateUser(ctx context.Context, id string, changes map[string]interface{}) (*model.User, error) {
@@ -27,10 +28,8 @@ func (r *myQueryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-// MyMutation returns generated.MyMutationResolver implementation.
 func (r *Resolver) MyMutation() generated.MyMutationResolver { return &myMutationResolver{r} }
 
-// MyQuery returns generated.MyQueryResolver implementation.
 func (r *Resolver) MyQuery() generated.MyQueryResolver { return &myQueryResolver{r} }
 
 type myMutationResolver struct{ *Resolver }
