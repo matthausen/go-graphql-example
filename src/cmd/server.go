@@ -9,9 +9,9 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/matthausen/gql-example/graph"
-	"github.com/matthausen/gql-example/graph/generated"
-	"github.com/matthausen/gql-example/graph/model"
+	"github.com/matthausen/gql-example/cmd/graph"
+	"github.com/matthausen/gql-example/cmd/graph/generated"
+	"github.com/matthausen/gql-example/cmd/graph/model"
 	"github.com/matthausen/gql-example/pkg/postgres"
 )
 
@@ -30,10 +30,10 @@ func main() {
 	}
 
 	userService := &postgres.UserService{
-		DbUserName: dbUserName,
-		DbPassword: dbPassword,
-		DbURL:      dbURL,
-		DbName:     dbName,
+		DbUserName: "graphql_example",
+		DbPassword: "graphql_password",
+		DbURL:      "localhost",
+		DbName:     "graphql",
 	}
 
 	err := userService.Initialise()

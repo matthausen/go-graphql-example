@@ -10,3 +10,4 @@ services:
       - POSTGRES_USER=graphql_example
       - POSTGRES_PASSWORD=graphql_password
       - POSTGRES_DB=graphql
+      - POSTGRES_HOST=localhost

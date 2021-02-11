@@ -7,8 +7,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/matthausen/gql-example/graph/generated"
-	"github.com/matthausen/gql-example/graph/model"
+	"github.com/matthausen/gql-example/cmd/graph/generated"
+	"github.com/matthausen/gql-example/cmd/graph/model"
 )
 
 func (r *myMutationResolver) CreateUser(ctx context.Context, user model.UserInput) (*model.User, error) {

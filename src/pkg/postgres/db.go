@@ -6,8 +6,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/golang-migrate/migrate"
-	"github.com/golang-migrate/migrate/database/postgres"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/golang-migrate/migrate/v4/source/github"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 	_ "github.com/jackc/pgx/v4/stdlib"
@@ -41,7 +44,7 @@ func (u *UserService) Initialise() error {
 	log.Printf("Target database schema version is: %d and current database schema version is: %d", targetSchemaVersion, version)
 	if version != targetSchemaVersion {
 		log.Printf("Migrating database schema from version: %d to version %d", version, targetSchemaVersion)
-		m, err := migrate.NewWithDatabaseInstance("file://../../pkg/postgres/migrations", u.DbName, driver)
+		m, err := migrate.NewWithDatabaseInstance("file://../pkg/postgres/migrations", u.DbName, driver)
 		if err != nil {
 			return err
 		}
@@ -61,7 +64,7 @@ func (u *UserService) Initialise() error {
 
 // Create - add a user to the table
 func (u *UserService) Create(text string, isDone bool) (*string, error) {
-	insertSQL := "insert into todo_item(id, text, is_done) values ($1, $2, $3)"
+	insertSQL := "insert into users(id, text, isPremium) values ($1, $2, $3)"
 	ctx := context.Background()
 	dbPool := u.getConnection()
 	defer dbPool.Close()
@@ -87,7 +90,7 @@ func (u *UserService) Create(text string, isDone bool) (*string, error) {
 
 // Update - update a record in user table
 func (u *UserService) Update(id string, text string, isDone bool) error {
-	updateSQL := "update todo_item set text = $1, is_done = $2 where id = $3"
+	updateSQL := "update users set name = $1, isPremium = $2 where id = $3"
 	ctx := context.Background()
 	dbPool := u.getConnection()
 	defer dbPool.Close()
@@ -111,7 +114,7 @@ func (u *UserService) Update(id string, text string, isDone bool) error {
 
 // Get - retrieve a single record of a user by id
 func (u *UserService) Get(id string) (*user.UserItem, error) {
-	selectSQL := "select id, text, is_done, creation_timestamp, update_timestamp from todo_item where id = $1"
+	selectSQL := "select id, name, isPremium, creation_timestamp, update_timestamp from users where id = $1"
 	dbPool := u.getConnection()
 	defer dbPool.Close()
 	var userItem user.UserItem
@@ -124,7 +127,7 @@ func (u *UserService) Get(id string) (*user.UserItem, error) {
 
 // List - retrieve all users from the table
 func (u *UserService) List() ([]user.UserItem, error) {
-	selectSQL := "select id, text, is_done, creation_timestamp, update_timestamp from todo_item"
+	selectSQL := "select id, name, isPremium, creation_timestamp, update_timestamp from users"
 	dbPool := u.getConnection()
 	defer dbPool.Close()
 	var userItems []user.UserItem
@@ -158,5 +161,6 @@ func (u *UserService) getConnection() *pgxpool.Pool {
 }
 
 func (u *UserService) getDBConnectionString() string {
+	fmt.Println(u.DbUserName, u.DbPassword, u.DbURL, u.DbName)
 	return fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", u.DbUserName, u.DbPassword, u.DbURL, u.DbName)
 }
