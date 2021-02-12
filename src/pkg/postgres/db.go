@@ -63,8 +63,8 @@ func (u *UserService) Initialise() error {
 }
 
 // Create - add a user to the table
-func (u *UserService) Create(text string, isDone bool) (*string, error) {
-	insertSQL := "insert into users(id, text, isPremium) values ($1, $2, $3)"
+func (u *UserService) Create(name string, isPremium bool) (*string, error) {
+	insertSQL := "insert into users(id, name, isPremium) values ($1, $2, $3)"
 	ctx := context.Background()
 	dbPool := u.getConnection()
 	defer dbPool.Close()
@@ -74,9 +74,9 @@ func (u *UserService) Create(text string, isDone bool) (*string, error) {
 	}
 	id := uuid.New()
 	idStr := id.String()
-	_, err = tx.Exec(ctx, insertSQL, idStr, text, isDone)
+	_, err = tx.Exec(ctx, insertSQL, idStr, name, isPremium)
 	if err != nil {
-		log.Println("ERROR: Could not save the To Do item due to the error:", err)
+		log.Println("ERROR: Could not save the User item due to the error:", err)
 		rollbackErr := tx.Rollback(ctx)
 		log.Fatal("ERROR: Transaction rollback failed due to the error: ", rollbackErr)
 		return nil, err
@@ -89,7 +89,7 @@ func (u *UserService) Create(text string, isDone bool) (*string, error) {
 }
 
 // Update - update a record in user table
-func (u *UserService) Update(id string, text string, isDone bool) error {
+func (u *UserService) Update(id string, name string, isPremium bool) error {
 	updateSQL := "update users set name = $1, isPremium = $2 where id = $3"
 	ctx := context.Background()
 	dbPool := u.getConnection()
@@ -98,9 +98,9 @@ func (u *UserService) Update(id string, text string, isDone bool) error {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(ctx, updateSQL, text, isDone, id)
+	_, err = tx.Exec(ctx, updateSQL, name, isPremium, id)
 	if err != nil {
-		log.Println("ERROR: Could not save the To Do item due to the error:", err)
+		log.Println("ERROR: Could not save the User item due to the error:", err)
 		rollbackErr := tx.Rollback(ctx)
 		log.Fatal("ERROR: Transaction rollback failed due to the error: ", rollbackErr)
 		return err
